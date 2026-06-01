@@ -8,7 +8,7 @@ WigglyPaint is made by [internet janitor](https://beyondloom.com/about/index.htm
 > If you enjoy using WigglyPaint, please take a moment to read
 > [the latest blog post from the WigglyPaint author](https://beyondloom.com/blog/onwigglypaint.html).
 
-![matikanefukukitaru and makitanetannhauser](./preview/screenshot.jpg)
+![matikanefukukitaru and makitanetannhauser](./public/screenshot.jpg)
 
 ## Usage
 

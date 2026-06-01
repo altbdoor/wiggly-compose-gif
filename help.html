@@ -11,6 +11,19 @@
       href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/darkly/bootstrap.min.css"
       rel="stylesheet"
     />
+    <style>
+      body {
+        background-image: url("/matikanefukukitaru_race.png");
+        background-repeat: no-repeat;
+        background-position: bottom right;
+        background-attachment: fixed;
+        background-size: 200px 301px;
+      }
+
+      .container {
+        max-width: 640px;
+      }
+    </style>
 
     <link
       rel="icon"
@@ -23,14 +36,21 @@
     />
   </head>
   <body>
-    <div class="container py-4">
+    <div class="container py-4 bg-secondary bg-opacity-75">
+      <h2>Wiggly Compose GIF</h2>
+      <hr />
+
+      <p>
+        <img
+          src="/screenshot.jpg"
+          alt="matikanefukukitaru and makitanetannhauser"
+          class="border border-primary rounded img-fluid"
+        />
+      </p>
+
       <!-- prettier-ignore -->
       <script type="text/markdown">
-## Wiggly Compose GIF
-
----
-
-### Usage
+##### Usage
 
 1. [Draw!](https://beyondloom.com/tools/wigglypaint.html#main) Then export the GIFs
 1. Load up the GIFs you want to compose into a video
@@ -39,7 +59,7 @@
 1. If the MP4 video is not playable, consider using the lossless reencode with FFmpeg
 1. Compose the video and download as needed
 
-### Help / FAQ
+##### Help / FAQ
 
 1. **Where is the source code?**
 
@@ -92,6 +112,8 @@
 1. **I have other questions**
 
     Feel free to open an [issue in GitHub](https://github.com/altbdoor/wiggly-compose-gif/issues).
+
+---
 
 [Go back](./)
       </script>
