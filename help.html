@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Help &middot; Wiggly Compose GIF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="last-modified" content="__LAST_DATE__" />
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/darkly/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="icon"
+      href="https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@v2.051/png/32/emoji_u1f4f9.png"
+      sizes="32x32"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@v2.051/png/512/emoji_u1f4f9.png"
+    />
+  </head>
+  <body>
+    <div class="container py-4">
+      <!-- prettier-ignore -->
+      <script type="text/markdown">
+## Wiggly Compose GIF
+
+---
+
+### Usage
+
+1. [Draw!](https://beyondloom.com/tools/wigglypaint.html#main) Then export the GIFs
+1. Load up the GIFs you want to compose into a video
+1. Rearrange, and edit the duration desired per GIF
+1. Choose render size and rotation as desired
+1. If the MP4 video is not playable, consider using the lossless reencode with FFmpeg
+1. Compose the video and download as needed
+
+### Help / FAQ
+
+1. **Where is the source code?**
+
+    <https://github.com/altbdoor/wiggly-compose-gif>
+
+1. **Can I upload other image formats?**
+
+    Only GIFs are allowed for now. I hope to support JPEG and PNG formats in the future as still frames.
+
+1. **How do I reorder GIFs?**
+
+    Drag and drop items in the queue list, or use the up/down arrow buttons.
+
+1. **How does per-GIF duration work?**
+
+    The GIF's frames will loop repeatedly until the set duration is met. For example, a 1-second GIF with duration 5 will loop its frames 5 times.
+
+    As additional info, WigglyPaint GIFs run at 10 frames per second with three frames. So each GIF takes 0.3 seconds.
+
+1. **Can I combine GIFs of different sizes?**
+
+    The tool uses the _first_ GIF's dimensions for the output video. GIFs with different sizes will be drawn into the same canvas without scaling. For best results, use GIFs with identical dimensions.
+
+1. **What does render size do?**
+
+    Multiplies the original canvas dimensions before encoding. `2x` produces a video twice as wide and twice as tall. If the dimensions are not in even numbers, we will trim 1px from the right or bottom, whichever is applicable. This is needed as the video encoder requires it.
+
+1. **What does rotation do?**
+
+    Without FFmpeg: stores rotation metadata — the player rotates on display. With FFmpeg: physically rotates the pixels so no metadata needed.
+
+    Either way, rotation does not affect quality, encoding time, or output video.
+
+1. **What do you mean "Lossless reencode with FFmpeg"?**
+
+    Some browsers (notably Firefox on Windows) produce MP4 files that won't play back in other apps. This option re-encodes the video through `FFmpeg.wasm` (loaded from a CDN, ~32MB download), which should fix compatibility issues. Technically it's _visually lossless_ at CRF 16.
+
+1. **Why is encoding slow?**
+
+    Video encoding is CPU-intensive. The FFmpeg option adds a second encoding pass. Rendering time depends on total GIF duration, dimensions, and your hardware.
+
+1. **Why do I get different quality or file sizes with different browsers?**
+
+    Each browser implements the WebCodecs API differently. Quality and encoding parameters may vary.
+
+1. **What browsers are supported?**
+
+    Generally modern browsers. I've really only tested in Firefox, Chrome, and Edge.
+
+1. **I have other questions**
+
+    Feel free to open an [issue in GitHub](https://github.com/altbdoor/wiggly-compose-gif/issues).
+
+[Go back](./)
+      </script>
+    </div>
+  </body>
+</html>

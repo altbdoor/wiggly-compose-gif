@@ -117,9 +117,15 @@ export function App() {
           </div>
         </div>
         <div className="col py-3">
-          <h5 className="m-0 pt-2">
-            <i className="bi bi-file-play"></i> Preview
-          </h5>
+          <div className="d-flex pt-2 justify-content-between align-items-center">
+            <h5 className="m-0">
+              <i className="bi bi-file-play"></i> Preview
+            </h5>
+
+            <a href="./help.html" className="btn btn-info btn-sm">
+              Need help?
+            </a>
+          </div>
 
           <Preview onCompose={compose} />
         </div>
