@@ -169,13 +169,16 @@ export function Preview(props: PreviewProps) {
             className="img-fluid"
             onLoadedData={(evt) => {
               const { videoWidth, videoHeight } = evt.currentTarget;
-              setDim(`${videoWidth}×${videoHeight}`);
+              setDim(`${videoWidth}&times;${videoHeight}px`);
               setDuration(evt.currentTarget.duration);
             }}
           />
 
           <div className="d-flex gap-2 justify-content-center">
-            <span className="badge text-bg-primary">{dim}px</span>
+            <span
+              className="badge text-bg-primary"
+              dangerouslySetInnerHTML={{ __html: dim }}
+            ></span>
             <span className="badge text-bg-primary">{size}MB</span>
             <span className="badge text-bg-primary">{duration}s</span>
             <span className="badge text-bg-secondary">

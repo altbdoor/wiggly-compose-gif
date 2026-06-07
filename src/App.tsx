@@ -80,17 +80,26 @@ export function App() {
   };
 
   return (
-    <div className="container position-relative">
+    <div className="container-fluid container-lg position-relative">
+      <div className="pt-2 d-md-none">
+        <div className="alert alert-warning p-1 text-black text-center mb-0">
+          <small>
+            <i className="bi bi-exclamation-triangle"></i> UI is not optimized
+            for mobile/tablet screen sizes.
+          </small>
+        </div>
+      </div>
+
       <div className="row">
-        <div className="col-4 py-3 vh-100 position-sticky top-0">
-          <div className="h-100 bg-secondary text-white overflow-y-scroll p-2 overflow-anchor-none">
+        <div className="col-12 col-md-6 col-lg-5 col-xl-4 py-3 left-block">
+          <div className="h-100 bg-secondary text-white p-2 overflow-anchor-none">
             <div className="d-flex align-items-center gap-1 pb-2">
               <h5 className="m-0">
                 <i className="bi bi-layers"></i> Queue
               </h5>
 
               <label className="btn btn-primary btn-sm ms-auto">
-                Upload GIFs
+                Upload <span className="d-none d-md-inline">GIFs</span>
                 <input
                   type="file"
                   accept="image/gif"

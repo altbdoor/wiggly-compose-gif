@@ -1,0 +1,17 @@
+.min-width-0 {
+  min-width: 0;
+}
+.overflow-anchor-none {
+  overflow-anchor: none;
+}
+
+@media (min-width: 768px) {
+  .left-block {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  .left-block > .h-100 {
+    overflow-y: scroll;
+  }
+}
