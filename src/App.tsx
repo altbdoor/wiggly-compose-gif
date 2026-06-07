@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, type ChangeEventHandler } from "react";
-import { QueueList } from "./QueueList";
-import { decodeGifFile, encodeIntoVideo } from "./util";
+import { useEffect, useRef, useState, type ChangeEventHandler } from "react";
 import type { ComposeOptions, QueueEntry } from "./model";
 import { Preview } from "./Preview";
+import { QueueList } from "./QueueList";
+import { decodeGif } from "./utils/decode-gif";
+import { encodeVideo } from "./utils/encode-video";
 
 export function App() {
   const [queue, setQueue] = useState<QueueEntry[]>([]);
@@ -24,7 +25,7 @@ export function App() {
     const newEntries: typeof queue = [];
 
     for (const file of files) {
-      const entry = await decodeGifFile(file, canvas);
+      const entry = await decodeGif(file, canvas);
       previewUrls.current.push(entry.previewUrl);
       newEntries.push(entry);
     }
@@ -69,7 +70,7 @@ export function App() {
       durationInS: opts.durations[idx] ?? 0,
     }));
 
-    const blob = encodeIntoVideo(
+    const blob = encodeVideo(
       resolved,
       opts.renderSize,
       opts.useFfmpeg,

@@ -6,7 +6,7 @@ interface PreviewProps {
   onCompose: (opts: ComposeOptions) => Promise<Blob | undefined>;
 }
 
-const FACTORS = [1, 2, 3, 4];
+const FACTORS = [0.5, 1, 2, 3, 4];
 const ROTATIONS = [0, 90, 180, 270];
 
 export function Preview(props: PreviewProps) {
@@ -41,7 +41,7 @@ export function Preview(props: PreviewProps) {
     const fd = new FormData(evt.currentTarget);
     const opts: ComposeOptions = {
       durations: (fd.getAll("duration") as string[]).map(Number.parseFloat),
-      renderSize: parseInt(fd.get("renderSize") as string, 10),
+      renderSize: parseFloat(fd.get("renderSize") as string),
       rotation: parseInt(fd.get("rotation") as string, 10),
       useFfmpeg: (fd.get("useFfmpeg") as string) === "yes",
     };

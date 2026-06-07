@@ -1,7 +1,6 @@
 import type { FFmpeg } from "@ffmpeg/ffmpeg";
 import { ArrayBufferTarget, Muxer } from "mp4-muxer";
-import { GifReader } from "omggif";
-import type { QueueEntry, QueueEntryFields } from "./model";
+import type { QueueEntry, QueueEntryFields } from "../model";
 
 let ffmpegInstance: FFmpeg | null = null;
 
@@ -23,53 +22,7 @@ async function getFfmpeg() {
   return ffmpegInstance;
 }
 
-export async function decodeGifFile(
-  file: File,
-  canvas: OffscreenCanvas,
-): Promise<QueueEntry> {
-  const buffer = await file.arrayBuffer();
-  const reader = new GifReader(new Uint8Array(buffer));
-
-  const width = reader.width;
-  const height = reader.height;
-  const rgba = new Uint8ClampedArray(width * height * 4);
-
-  const frames = Array(reader.numFrames())
-    .fill(0)
-    .map((_, idx) => {
-      const frameInfo = reader.frameInfo(idx);
-      reader.decodeAndBlitFrameRGBA(idx, rgba);
-
-      return {
-        delayInMs: frameInfo.delay * 10,
-        data: new Uint8ClampedArray(rgba),
-      };
-    });
-
-  const id = crypto.randomUUID();
-  const filename = file.name;
-
-  // generate preview image
-  const ctx = canvas.getContext("2d")!;
-  canvas.width = width;
-  canvas.height = height;
-  ctx.clearRect(0, 0, width, height);
-  const imageData = new ImageData(
-    frames[0].data as ImageDataArray,
-    width,
-    height,
-  );
-  ctx.putImageData(imageData, 0, 0);
-  const blob = await canvas.convertToBlob({
-    quality: 0.75,
-    type: "image/jpeg",
-  });
-  const previewUrl = URL.createObjectURL(blob);
-
-  return { id, filename, previewUrl, frames, width, height };
-}
-
-export async function encodeIntoVideo(
+export async function encodeVideo(
   assets: (QueueEntry & QueueEntryFields)[],
   resizeFactor: number,
   useFfmpeg: boolean,
@@ -78,10 +31,9 @@ export async function encodeIntoVideo(
   const sourceW = assets[0].width;
   const sourceH = assets[0].height;
 
-  let targetW = sourceW * resizeFactor;
-  let targetH = sourceH * resizeFactor;
+  let targetW = Math.floor(sourceW * resizeFactor);
+  let targetH = Math.floor(sourceH * resizeFactor);
 
-  // trim dimension because video encoder needs divisible by 2
   targetW = targetW % 2 === 0 ? targetW : targetW - 1;
   targetH = targetH % 2 === 0 ? targetH : targetH - 1;
 
@@ -118,6 +70,7 @@ export async function encodeIntoVideo(
 
   const { supported } = await VideoEncoder.isConfigSupported(encoderConfig);
   if (!supported) {
+    console.error(encoderConfig);
     throw new Error("VideoEncoder config not supported");
   }
 
