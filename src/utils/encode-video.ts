@@ -65,7 +65,7 @@ export async function encodeVideo(
     codec: `avc1.42E0${codecLevel}`,
     width: targetW,
     height: targetH,
-    bitrate: 4_000_000,
+    bitrate: 64_000_000,
   };
 
   const { supported } = await VideoEncoder.isConfigSupported(encoderConfig);
