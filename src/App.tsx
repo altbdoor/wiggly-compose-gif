@@ -58,6 +58,24 @@ export function App() {
     });
   };
 
+  const duplicateEntry = (id: string) => {
+    setQueue((prev) => {
+      const idx = prev.findIndex((item) => item.id === id);
+      if (idx === -1) {
+        return prev;
+      }
+
+      const copy: QueueEntry = {
+        ...prev[idx],
+        id: crypto.randomUUID(),
+      };
+
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+  };
+
   const compose = async (opts: ComposeOptions) => {
     if (queue.length === 0) {
       return;
@@ -112,7 +130,12 @@ export function App() {
               </button>
             </div>
 
-            <QueueList items={queue} remove={removeFromQueue} move={moveQueue} />
+            <QueueList
+              items={queue}
+              remove={removeFromQueue}
+              move={moveQueue}
+              duplicate={duplicateEntry}
+            />
           </div>
         </div>
         <div className="col py-3">

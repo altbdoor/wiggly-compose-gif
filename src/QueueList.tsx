@@ -2,16 +2,20 @@ import { DragDropContext, Draggable, Droppable, type OnDragEndResponder } from "
 import { FORM_ID } from "./constants";
 import type { QueueEntry } from "./model";
 
-interface QueueItemProps {
+interface BaseQueueProps {
+  move: (from: number, to: number) => void;
+  remove: (id: string, previewUrl: string) => void;
+  duplicate: (id: string) => void;
+}
+
+interface QueueItemProps extends BaseQueueProps {
   entry: QueueEntry;
   idx: number;
   isFirst: boolean;
   isLast: boolean;
-  move: (from: number, to: number) => void;
-  remove: (id: string, previewUrl: string) => void;
 }
 
-function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps) {
+function QueueItem({ entry, idx, isFirst, isLast, ...props }: QueueItemProps) {
   return (
     <div className="rounded bg-dark p-2">
       <div className="d-flex gap-2">
@@ -19,7 +23,7 @@ function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps
           <button
             type="button"
             className="btn btn-secondary btn-sm"
-            onClick={() => move(idx, idx - 1)}
+            onClick={() => props.move(idx, idx - 1)}
             disabled={isFirst}
           >
             <i className="bi bi-arrow-up"></i>
@@ -27,7 +31,7 @@ function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps
           <button
             type="button"
             className="btn btn-secondary btn-sm"
-            onClick={() => move(idx, idx + 1)}
+            onClick={() => props.move(idx, idx + 1)}
             disabled={isLast}
           >
             <i className="bi bi-arrow-down"></i>
@@ -49,7 +53,7 @@ function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps
             <button
               type="button"
               className="btn btn-sm btn-outline-danger"
-              onClick={() => remove(entry.id, entry.previewUrl)}
+              onClick={() => props.remove(entry.id, entry.previewUrl)}
             >
               <i className="bi bi-trash-fill"></i>
             </button>
@@ -68,16 +72,23 @@ function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps
               <span className="input-group-text">s</span>
             </div>
           </div>
+          <div className="d-flex justify-content-end pt-1">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => props.duplicate(entry.id)}
+            >
+              Duplicate
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-interface QueueListProps {
+interface QueueListProps extends BaseQueueProps {
   items: QueueEntry[];
-  remove: (id: string, previewUrl: string) => void;
-  move: (from: number, to: number) => void;
 }
 
 export function QueueList({ items, ...props }: QueueListProps) {
@@ -119,8 +130,7 @@ export function QueueList({ items, ...props }: QueueListProps) {
                       idx={idx}
                       isFirst={idx === 0}
                       isLast={idx === items.length - 1}
-                      move={props.move}
-                      remove={props.remove}
+                      {...props}
                     />
                   </div>
                 )}
