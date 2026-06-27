@@ -10,10 +10,7 @@ export default defineConfig({
       name: "Transform HTML files",
       transformIndexHtml(html) {
         let fixedHtml = html;
-        fixedHtml = fixedHtml.replace(
-          "__LAST_DATE__",
-          new Date().toISOString(),
-        );
+        fixedHtml = fixedHtml.replace("__LAST_DATE__", new Date().toISOString());
 
         if (fixedHtml.includes('<script type="text/markdown">')) {
           fixedHtml = fixedHtml.replace(

@@ -107,20 +107,10 @@ export async function encodeVideo(
           currentAsset.height,
         );
 
-        originalCtx.clearRect(
-          0,
-          0,
-          originalCanvas.width,
-          originalCanvas.height,
-        );
+        originalCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
         originalCtx.putImageData(imageData, 0, 0);
 
-        multipliedCtx.clearRect(
-          0,
-          0,
-          multipliedCanvas.width,
-          multipliedCanvas.height,
-        );
+        multipliedCtx.clearRect(0, 0, multipliedCanvas.width, multipliedCanvas.height);
         multipliedCtx.drawImage(
           originalCanvas,
           0,
@@ -191,13 +181,8 @@ export async function encodeVideo(
       throw new Error(`ffmpeg re-encode failed (exit ${exitCode})`);
     }
 
-    const outputBytes = (await ffmpeg.readFile(
-      "output.mp4",
-    )) as unknown as ArrayBuffer;
-    await Promise.all([
-      ffmpeg.deleteFile("input.mp4"),
-      ffmpeg.deleteFile("output.mp4"),
-    ]);
+    const outputBytes = (await ffmpeg.readFile("output.mp4")) as unknown as ArrayBuffer;
+    await Promise.all([ffmpeg.deleteFile("input.mp4"), ffmpeg.deleteFile("output.mp4")]);
 
     const ffBlob = new Blob([outputBytes], { type: "video/mp4" });
     return ffBlob;

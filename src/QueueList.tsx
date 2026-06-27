@@ -1,9 +1,4 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  type OnDragEndResponder,
-} from "@hello-pangea/dnd";
+import { DragDropContext, Draggable, Droppable, type OnDragEndResponder } from "@hello-pangea/dnd";
 import { FORM_ID } from "./constants";
 import type { QueueEntry } from "./model";
 
@@ -16,14 +11,7 @@ interface QueueItemProps {
   remove: (id: string, previewUrl: string) => void;
 }
 
-function QueueItem({
-  entry,
-  idx,
-  isFirst,
-  isLast,
-  move,
-  remove,
-}: QueueItemProps) {
+function QueueItem({ entry, idx, isFirst, isLast, move, remove }: QueueItemProps) {
   return (
     <div className="rounded bg-dark p-2">
       <div className="d-flex gap-2">
@@ -96,8 +84,8 @@ export function QueueList({ items, ...props }: QueueListProps) {
   if (items.length === 0) {
     return (
       <div className="p-3 text-center">
-        <i className="bi bi-info-circle"></i> No files in queue. Add files with
-        the upload button above.
+        <i className="bi bi-info-circle"></i> No files in queue. Add files with the upload button
+        above.
       </div>
     );
   }
@@ -116,11 +104,7 @@ export function QueueList({ items, ...props }: QueueListProps) {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="queue">
         {(dropProv) => (
-          <div
-            ref={dropProv.innerRef}
-            {...dropProv.droppableProps}
-            className="d-flex flex-column"
-          >
+          <div ref={dropProv.innerRef} {...dropProv.droppableProps} className="d-flex flex-column">
             {items.map((entry, idx) => (
               <Draggable key={entry.id} draggableId={entry.id} index={idx}>
                 {(dragProv, snapshot) => (
@@ -128,9 +112,7 @@ export function QueueList({ items, ...props }: QueueListProps) {
                     ref={dragProv.innerRef}
                     {...dragProv.draggableProps}
                     {...dragProv.dragHandleProps}
-                    className={
-                      "pb-1 " + (snapshot.isDragging ? "opacity-50" : "")
-                    }
+                    className={"pb-1 " + (snapshot.isDragging ? "opacity-50" : "")}
                   >
                     <QueueItem
                       entry={entry}

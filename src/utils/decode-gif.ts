@@ -1,10 +1,7 @@
 import { GifReader } from "omggif";
 import type { QueueEntry } from "../model";
 
-export async function decodeGif(
-  file: File,
-  canvas: OffscreenCanvas,
-): Promise<QueueEntry> {
+export async function decodeGif(file: File, canvas: OffscreenCanvas): Promise<QueueEntry> {
   const buffer = await file.arrayBuffer();
   const reader = new GifReader(new Uint8Array(buffer));
 
@@ -32,11 +29,7 @@ export async function decodeGif(
   canvas.width = width;
   canvas.height = height;
   ctx.clearRect(0, 0, width, height);
-  const imageData = new ImageData(
-    frames[0].data as ImageDataArray,
-    width,
-    height,
-  );
+  const imageData = new ImageData(frames[0].data as ImageDataArray, width, height);
   ctx.putImageData(imageData, 0, 0);
   const blob = await canvas.convertToBlob({
     quality: 0.75,

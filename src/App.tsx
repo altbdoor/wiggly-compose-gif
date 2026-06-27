@@ -35,9 +35,7 @@ export function App() {
 
   const removeFromQueue = (removeId: string, previewUrl: string) => {
     URL.revokeObjectURL(previewUrl);
-    previewUrls.current = previewUrls.current.filter(
-      (url) => url !== previewUrl,
-    );
+    previewUrls.current = previewUrls.current.filter((url) => url !== previewUrl);
     setQueue((prev) => prev.filter((item) => item.id !== removeId));
   };
 
@@ -70,12 +68,7 @@ export function App() {
       durationInS: opts.durations[idx] ?? 0,
     }));
 
-    const blob = encodeVideo(
-      resolved,
-      opts.renderSize,
-      opts.useFfmpeg,
-      opts.rotation,
-    );
+    const blob = encodeVideo(resolved, opts.renderSize, opts.useFfmpeg, opts.rotation);
     return blob;
   };
 
@@ -84,8 +77,8 @@ export function App() {
       <div className="pt-2 d-md-none">
         <div className="alert alert-warning p-1 text-black text-center mb-0">
           <small>
-            <i className="bi bi-exclamation-triangle"></i> UI is not optimized
-            for mobile/tablet screen sizes.
+            <i className="bi bi-exclamation-triangle"></i> UI is not optimized for mobile/tablet
+            screen sizes.
           </small>
         </div>
       </div>
@@ -119,11 +112,7 @@ export function App() {
               </button>
             </div>
 
-            <QueueList
-              items={queue}
-              remove={removeFromQueue}
-              move={moveQueue}
-            />
+            <QueueList items={queue} remove={removeFromQueue} move={moveQueue} />
           </div>
         </div>
         <div className="col py-3">

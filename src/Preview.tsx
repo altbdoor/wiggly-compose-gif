@@ -137,18 +137,10 @@ export function Preview(props: PreviewProps) {
         </div>
 
         <div className="d-flex gap-2">
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            disabled={isLoading}
-          >
+          <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
             {isLoading ? "Loading..." : "Compose video"}
           </button>
-          <button
-            type="reset"
-            className="btn btn-secondary"
-            disabled={isLoading}
-          >
+          <button type="reset" className="btn btn-secondary" disabled={isLoading}>
             Reset
           </button>
         </div>
