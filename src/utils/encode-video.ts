@@ -96,9 +96,11 @@ export async function encodeVideo(
       let loopFrameIdx = 0;
 
       // continuous loop until we match the duration needed
-      // may overrun — that's intentional, avoids truncated frames
+      // may overrun, that's intentional, avoids truncated frames
       while (totalAssetTimeInMs < targetDurationInMs) {
         const loopFrame = currentAsset.frames[loopFrameIdx];
+        const frameDurationInMs =
+          loopFrame.delayInMs === -1 ? targetDurationInMs : loopFrame.delayInMs;
 
         // draw frame into canvas
         const imageData = new ImageData(
@@ -122,7 +124,7 @@ export async function encodeVideo(
         // render canvas into video frame
         const vf = new VideoFrame(multipliedCanvas, {
           timestamp: totalRenderTimeInMs * 1000,
-          duration: loopFrame.delayInMs * 1000,
+          duration: frameDurationInMs * 1000,
         });
 
         // encode
@@ -134,8 +136,8 @@ export async function encodeVideo(
         }
 
         // update time and index
-        totalRenderTimeInMs += loopFrame.delayInMs;
-        totalAssetTimeInMs += loopFrame.delayInMs;
+        totalRenderTimeInMs += frameDurationInMs;
+        totalAssetTimeInMs += frameDurationInMs;
         loopFrameIdx = (loopFrameIdx + 1) % currentAsset.frames.length;
       }
     });

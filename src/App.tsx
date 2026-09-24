@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ChangeEventHandler } from "react";
 import type { ComposeOptions, QueueEntry } from "./model";
 import { Preview } from "./Preview";
 import { QueueList } from "./QueueList";
-import { decodeGif } from "./utils/decode-gif";
+import { decodeImage } from "./utils/decode-gif";
 import { encodeVideo } from "./utils/encode-video";
 
 export function App() {
@@ -25,7 +25,7 @@ export function App() {
     const newEntries: typeof queue = [];
 
     for (const file of files) {
-      const entry = await decodeGif(file, canvas);
+      const entry = await decodeImage(file, canvas);
       previewUrls.current.push(entry.previewUrl);
       newEntries.push(entry);
     }
@@ -110,10 +110,10 @@ export function App() {
               </h5>
 
               <label className="btn btn-primary btn-sm ms-auto">
-                Upload <span className="d-none d-md-inline">GIFs</span>
+                Upload <span className="d-none d-md-inline">images</span>
                 <input
                   type="file"
-                  accept="image/gif"
+                  accept="image/gif,image/jpeg,image/png,image/webp"
                   multiple
                   onChange={handleChange}
                   className="d-none"

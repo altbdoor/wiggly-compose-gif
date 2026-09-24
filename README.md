@@ -13,8 +13,8 @@ WigglyPaint is made by [internet janitor](https://beyondloom.com/about/index.htm
 ## Usage
 
 1. [Draw!](https://beyondloom.com/tools/wigglypaint.html#main) Then export the GIFs
-1. Load up the GIFs you want to compose into a video
-1. Rearrange, and edit the duration desired per GIF
+1. Load up the images you want to compose into a video
+1. Rearrange, and edit the duration desired per image
 1. Choose render size and rotation as desired
 1. If the MP4 video is not playable, consider using the lossless reencode with FFmpeg
 1. Compose the video and download as needed
