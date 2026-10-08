@@ -1,11 +1,16 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
-
-import "./style.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <div>
+      <p>Version 2 WIP</p>
+      <p>
+        <a href="./v1/">See version 1</a>
+      </p>
+      <p>
+        <a href="./help.html">Need help?</a>
+      </p>
+    </div>
   </StrictMode>,
 );
