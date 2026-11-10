@@ -1,0 +1,198 @@
+import type { FFmpeg } from "@ffmpeg/ffmpeg";
+import { ArrayBufferTarget, Muxer } from "mp4-muxer";
+import type { QueueEntry2 } from "../model";
+
+let ffmpegInstance: FFmpeg | null = null;
+
+async function getFfmpeg() {
+  if (ffmpegInstance) {
+    return ffmpegInstance;
+  }
+
+  // 1.10MB gzipped, total 2.89MB
+  const hash = "d08d877ed3e78b1d05f9edee9ad42a31d1dbb34c";
+  const cdnUrl = `https://cdn.jsdelivr.net/gh/altbdoor/ffmpeg-wasm-custom@${hash}/esm`;
+
+  const { FFmpeg } = await import("@ffmpeg/ffmpeg");
+  ffmpegInstance = new FFmpeg();
+
+  await ffmpegInstance.load({
+    coreURL: `${cdnUrl}/ffmpeg-core.js`,
+    wasmURL: `${cdnUrl}/ffmpeg-core.wasm`,
+  });
+  return ffmpegInstance;
+}
+
+export async function encodeVideo(
+  assets: QueueEntry2[],
+  resizeFactor: number,
+  useFfmpeg: boolean,
+  rotation: number,
+): Promise<Blob> {
+  const sourceW = assets[0].width;
+  const sourceH = assets[0].height;
+
+  let targetW = Math.floor(sourceW * resizeFactor);
+  let targetH = Math.floor(sourceH * resizeFactor);
+
+  targetW = targetW % 2 === 0 ? targetW : targetW - 1;
+  targetH = targetH % 2 === 0 ? targetH : targetH - 1;
+
+  const multipliedCanvas = new OffscreenCanvas(targetW, targetH);
+  const multipliedCtx = multipliedCanvas.getContext("2d")!;
+  multipliedCtx.imageSmoothingEnabled = false;
+
+  const originalCanvas = new OffscreenCanvas(sourceW, sourceH);
+  const originalCtx = originalCanvas.getContext("2d")!;
+  originalCtx.imageSmoothingEnabled = false;
+
+  const muxer = new Muxer({
+    target: new ArrayBufferTarget(),
+    video: {
+      codec: "avc",
+      width: multipliedCanvas.width,
+      height: multipliedCanvas.height,
+      rotation: rotation as 90,
+    },
+    fastStart: "in-memory",
+  });
+
+  const pixels = targetW * targetH;
+
+  // level 3.0: 414,720px, 3.1: 921,600px, 4.0: 2,097,152px
+  const codecLevel = pixels <= 414_720 ? "1E" : pixels <= 921_600 ? "1F" : "28";
+
+  const encoderConfig: VideoEncoderConfig = {
+    codec: `avc1.42E0${codecLevel}`,
+    width: targetW,
+    height: targetH,
+    bitrate: 64_000_000,
+  };
+
+  const { supported } = await VideoEncoder.isConfigSupported(encoderConfig);
+  if (!supported) {
+    console.error(encoderConfig);
+    throw new Error("VideoEncoder config not supported");
+  }
+
+  let encoderError: Error | null = null;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: (err) => {
+      encoderError = new Error(`VideoEncoder error: ${String(err)}`);
+    },
+  });
+
+  try {
+    encoder.configure(encoderConfig);
+
+    let totalRenderTimeInMs = 0;
+    assets.forEach((currentAsset) => {
+      const targetDurationInMs = currentAsset.duration * 1000;
+      if (currentAsset.frames.length === 0 || targetDurationInMs <= 0) {
+        return;
+      }
+
+      let totalAssetTimeInMs = 0;
+      let loopFrameIdx = 0;
+
+      // continuous loop until we match the duration needed
+      // may overrun, that's intentional, avoids truncated frames
+      while (totalAssetTimeInMs < targetDurationInMs) {
+        const loopFrame = currentAsset.frames[loopFrameIdx];
+
+        let frameDurationInMs = targetDurationInMs;
+        if (loopFrame.delayInMs !== -1) {
+          frameDurationInMs = loopFrame.delayInMs / 2 ** currentAsset.speed;
+        }
+
+        // draw frame into canvas
+        const imageData = new ImageData(
+          loopFrame.data as ImageDataArray,
+          currentAsset.width,
+          currentAsset.height,
+        );
+
+        originalCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+        originalCtx.putImageData(imageData, 0, 0);
+
+        multipliedCtx.clearRect(0, 0, multipliedCanvas.width, multipliedCanvas.height);
+        multipliedCtx.drawImage(
+          originalCanvas,
+          0,
+          0,
+          originalCanvas.width * resizeFactor,
+          originalCanvas.height * resizeFactor,
+        );
+
+        // render canvas into video frame
+        const vf = new VideoFrame(multipliedCanvas, {
+          timestamp: totalRenderTimeInMs * 1000,
+          duration: frameDurationInMs * 1000,
+        });
+
+        // encode
+        encoder.encode(vf, { keyFrame: loopFrameIdx === 0 });
+        vf.close();
+
+        if (encoderError) {
+          throw encoderError;
+        }
+
+        // update time and index
+        totalRenderTimeInMs += frameDurationInMs;
+        totalAssetTimeInMs += frameDurationInMs;
+        loopFrameIdx = (loopFrameIdx + 1) % currentAsset.frames.length;
+      }
+    });
+
+    // finalize all video
+    await encoder.flush();
+    if (encoderError) {
+      throw encoderError;
+    }
+
+    muxer.finalize();
+    const { buffer } = muxer.target;
+
+    if (!useFfmpeg) {
+      const blob = new Blob([buffer], { type: "video/mp4" });
+      return blob;
+    }
+
+    const ffmpeg = await getFfmpeg();
+    await ffmpeg.writeFile("input.mp4", new Uint8Array(buffer));
+
+    // visually lossless reencoding
+    const exitCode = await ffmpeg.exec([
+      "-fflags",
+      "+genpts",
+      "-i",
+      "input.mp4",
+      "-c:v",
+      "libx264",
+      "-preset",
+      "ultrafast",
+      "-crf",
+      "16",
+      "-pix_fmt",
+      "yuv420p",
+      "-movflags",
+      "+faststart",
+      "-an",
+      "output.mp4",
+    ]);
+
+    if (exitCode !== 0) {
+      throw new Error(`ffmpeg re-encode failed (exit ${exitCode})`);
+    }
+
+    const outputBytes = (await ffmpeg.readFile("output.mp4")) as unknown as ArrayBuffer;
+    await Promise.all([ffmpeg.deleteFile("input.mp4"), ffmpeg.deleteFile("output.mp4")]);
+
+    const ffBlob = new Blob([outputBytes], { type: "video/mp4" });
+    return ffBlob;
+  } finally {
+    encoder.close();
+  }
+}

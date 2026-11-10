@@ -1,0 +1,233 @@
+html,
+body {
+  overscroll-behavior: none;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+/* ========================================
+  app
+======================================== */
+.app {
+  display: grid;
+  height: 100dvh;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: minmax(0, 1fr) min-content;
+  grid-template-areas:
+    "header preview"
+    "timeline timeline";
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.app > div {
+  border: 1px solid var(--bs-gray-700);
+  padding: 0.5rem;
+  border-radius: var(--bs-border-radius-lg);
+}
+
+.app__controls {
+  grid-area: header;
+  overflow-y: auto;
+}
+
+.app__preview {
+  grid-area: preview;
+  min-width: 0;
+  min-height: 0;
+}
+
+.app__timeline {
+  grid-area: timeline;
+}
+
+/* ========================================
+  controls
+======================================== */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.controls__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.controls__extra {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  justify-content: space-evenly;
+  padding-top: 1rem;
+}
+
+/* ========================================
+  timeline
+======================================== */
+.timeline {
+  height: 180px;
+  width: 100%;
+  overflow-x: scroll;
+  --slot-height: 6rem;
+  position: relative;
+}
+
+.timeline__dial {
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--bs-danger);
+  z-index: 10;
+  border-radius: 2px;
+  transition: transform 0.1s linear;
+  pointer-events: none;
+}
+
+.timeline__dial > div {
+  position: relative;
+}
+.timeline__dial > div::before {
+  position: absolute;
+  top: 0;
+  left: calc(-0.6rem + 1px);
+  content: " ";
+  border-width: 1rem 0.6rem 0;
+  border-style: solid;
+  border-color: var(--bs-danger) transparent transparent;
+}
+
+.timeline__ruler {
+  width: max-content;
+  height: 2rem;
+
+  background-image: url("/timeline-tick.svg");
+  background-size: var(--second-width) 100%;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+
+  display: grid;
+  grid-auto-columns: var(--second-width);
+  grid-auto-flow: column;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.timeline__ruler > span {
+  display: block;
+  padding: 0 0.25rem;
+  line-height: 1;
+}
+
+.timeline__items {
+  display: flex;
+  padding-top: 0.5rem;
+  width: max-content;
+}
+
+.timeline__item {
+  user-select: none;
+  position: relative;
+}
+
+.timeline__item-object {
+  background-color: var(--bs-gray-700);
+  padding: 0.25rem;
+  border: 2px solid var(--bs-body-bg);
+  overflow: hidden;
+  height: var(--slot-height);
+  border-radius: var(--bs-border-radius-lg);
+  transition: all 0.2s ease;
+}
+.timeline__item:hover > .timeline__item-object {
+  background-color: var(--bs-yellow);
+  border-color: var(--bs-yellow);
+}
+
+.timeline__item--dragging > .timeline__item-object {
+  background-color: var(--bs-yellow);
+  border-color: var(--bs-yellow);
+  opacity: 0.7;
+  transform: rotate(-4deg);
+}
+
+.timeline__item-object > img {
+  height: 100%;
+  width: auto;
+  border-radius: var(--bs-border-radius-sm);
+}
+
+.timeline__item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: var(--bs-secondary);
+  border-radius: var(--bs-border-radius-sm);
+  box-shadow: var(--bs-box-shadow-lg);
+}
+.timeline__item-form > .input-group,
+.timeline__item-form input[type="range"] {
+  width: 130px;
+}
+
+.timeline__item-form + svg {
+  left: 0.5rem !important;
+}
+
+.timeline__item-form-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+/* ========================================
+  preview
+======================================== */
+.preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preview__controls {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.preview__video {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.preview__video > video {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  min-width: 0;
+  min-height: 0;
+}
+
+.preview__status {
+  width: 100%;
+  display: flex;
+  gap: 0.25rem;
+  justify-content: flex-end;
+}

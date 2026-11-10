@@ -87,7 +87,7 @@
 
 1. **What does render size do?**
 
-    Multiplies the original canvas dimensions before encoding. `2x` produces a video twice as wide and twice as tall. If the dimensions are not in even numbers, we will trim 1px from the right or bottom, whichever is applicable. This is needed as the video encoder requires it.
+    Multiplies the original canvas dimensions before encoding. `2x` produces a video twice as wide and twice as tall. If the dimensions are in odd numbers, we will trim 1px from the right or bottom, whichever is applicable. This is needed as the video encoder requires it.
 
 1. **What does rotation do?**
 
@@ -97,7 +97,7 @@
 
 1. **What do you mean "Lossless reencode with FFmpeg"?**
 
-    Some browsers (notably Firefox on Windows) produce MP4 files that won't play back in other apps. This option re-encodes the video through `FFmpeg.wasm` (loaded from a CDN, ~32MB download), which should fix compatibility issues. Technically it's _visually lossless_ at CRF 16.
+    Some browsers (notably Firefox on Windows) produce MP4 files that won't play back in other apps. This option re-encodes the video through `FFmpeg.wasm` (loaded from a CDN, ~3MB download), which should fix compatibility issues. Technically it's _visually lossless_ at CRF 16.
 
 1. **Why is encoding slow?**
 

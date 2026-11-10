@@ -8,7 +8,7 @@ WigglyPaint is made by [internet janitor](https://beyondloom.com/about/index.htm
 > If you enjoy using WigglyPaint, please take a moment to read
 > [the latest blog post from the WigglyPaint author](https://beyondloom.com/blog/onwigglypaint.html).
 
-![matikanefukukitaru and makitanetannhauser](./public/screenshot.jpg)
+![tm opera o](./public/screenshot_v2.jpg)
 
 ## Usage
 
@@ -17,7 +17,7 @@ WigglyPaint is made by [internet janitor](https://beyondloom.com/about/index.htm
 1. Rearrange, and edit the duration desired per image
 1. Choose render size and rotation as desired
 1. If the MP4 video is not playable, consider using the lossless reencode with FFmpeg
-1. Compose the video and download as needed
+1. Video is auto-composed and can be downloaded as needed
 
 ## Made with
 
@@ -26,4 +26,6 @@ WigglyPaint is made by [internet janitor](https://beyondloom.com/about/index.htm
 - `omggif` and `mp4-muxer`, to parse GIFs into image data and compose into a video
   - Yep I know `mp4-muxer` is deprecated, but it just works
 - `@hello-pangea/dnd` for beautiful drag and drop interaction
+- `@floating-ui/react` for hover effects
 - `@ffmpeg/ffmpeg` WASM as fallback when the WebCodecs misbehave
+- `zustand` for easier state management

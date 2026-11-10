@@ -9,8 +9,9 @@ async function getFfmpeg() {
     return ffmpegInstance;
   }
 
-  // 9MB gzipped, total 32MB
-  const cdnUrl = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm";
+  // 1.10MB gzipped, total 2.89MB
+  const hash = "d08d877ed3e78b1d05f9edee9ad42a31d1dbb34c";
+  const cdnUrl = `https://cdn.jsdelivr.net/gh/altbdoor/ffmpeg-wasm-custom@${hash}/esm`;
 
   const { FFmpeg } = await import("@ffmpeg/ffmpeg");
   ffmpegInstance = new FFmpeg();
