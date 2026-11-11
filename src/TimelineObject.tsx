@@ -73,7 +73,7 @@ export function TimelineObject({
         ref={refs.setReference}
         {...getReferenceProps()}
       >
-        <img src={previewUrl} alt={id} />
+        <img src={previewUrl || `${import.meta.env.BASE_URL}blank.png`} alt={id} />
       </div>
 
       {isOpen && !isDragging && (

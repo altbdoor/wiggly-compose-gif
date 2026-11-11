@@ -6,6 +6,15 @@ import type { QueueEntry2 } from "../model";
 const canvas = new OffscreenCanvas(1, 1);
 const ctx = canvas.getContext("2d")!;
 
+export async function createPreviewUrl(data: Uint8ClampedArray, width: number, height: number) {
+  canvas.width = width;
+  canvas.height = height;
+  ctx.clearRect(0, 0, width, height);
+  ctx.putImageData(new ImageData(data as ImageDataArray, width, height), 0, 0);
+  const blob = await canvas.convertToBlob({ quality: 0.75, type: "image/jpeg" });
+  return create(blob);
+}
+
 export async function decodeImage(file: File): Promise<QueueEntry2> {
   let width = -1;
   let height = -1;
@@ -53,17 +62,7 @@ export async function decodeImage(file: File): Promise<QueueEntry2> {
   const filename = file.name;
 
   // generate preview image
-  canvas.width = width;
-  canvas.height = height;
-  ctx.clearRect(0, 0, width, height);
-  const imageData = new ImageData(frames[0].data as ImageDataArray, width, height);
-  ctx.putImageData(imageData, 0, 0);
-  const blob = await canvas.convertToBlob({
-    quality: 0.75,
-    type: "image/jpeg",
-  });
-
-  const previewUrl = create(blob);
+  const previewUrl = await createPreviewUrl(frames[0].data, width, height);
 
   return { id, filename, previewUrl, frames, width, height, duration: 1, speed: 0 };
 }
