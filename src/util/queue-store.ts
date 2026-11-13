@@ -111,21 +111,19 @@ export const useQueueStore = create<QueueStore>()(
           return;
         }
 
-        Promise.all(
-          state.queue.map(async (entry) => {
-            if (entry.frames.length === 0) {
-              return entry;
-            }
-
+        (async () => {
+          const next: QueueEntry2[] = [];
+          for (const entry of state.queue) {
             // blob object urls are invalid after reload; regenerate from frame data
             const previewUrl = await createPreviewUrl(
               entry.frames[0].data,
               entry.width,
               entry.height,
             );
-            return { ...entry, previewUrl };
-          }),
-        ).then((queue) => storeRef.setQueue(queue));
+            next.push({ ...entry, previewUrl });
+          }
+          storeRef.setQueue(next);
+        })();
       },
     },
   ),

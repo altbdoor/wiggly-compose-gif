@@ -47,11 +47,16 @@ export function Preview() {
       return;
     }
 
+    let cancelled = false;
     const delayEncodeId = setTimeout(async () => {
       const startTime = Date.now();
       setIsProcessing(true);
 
       const blob = await encodeVideo(queue, factor, useFfmpeg === "yes", rotate);
+      if (cancelled) {
+        return;
+      }
+
       const blobUrl = create(blob);
 
       setVideoSrc((prev) => {
@@ -64,9 +69,12 @@ export function Preview() {
       setIsProcessing(false);
       setProcessTime((Date.now() - startTime) / 1000);
       setMetadata((prev) => ({ ...prev, size: (blob.size / 1024 / 1024).toFixed(2) }));
-    }, 200);
+    }, 400);
 
-    return () => clearTimeout(delayEncodeId);
+    return () => {
+      cancelled = true;
+      clearTimeout(delayEncodeId);
+    };
   }, [queue, rotate, factor, useFfmpeg]);
 
   return (
@@ -119,7 +127,6 @@ export function Preview() {
       <div className="preview__video">
         <video
           ref={videoRef}
-          key={videoSrc}
           loop
           muted
           controls

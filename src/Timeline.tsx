@@ -31,6 +31,10 @@ export function Timeline() {
   };
 
   const translateScroll: WheelEventHandler<HTMLDivElement> = (evt) => {
+    if (evt.shiftKey || evt.ctrlKey) {
+      return;
+    }
+
     if (evt.deltaY !== 0) {
       // evt.preventDefault();
       const parent = evt.currentTarget.closest(".timeline");
